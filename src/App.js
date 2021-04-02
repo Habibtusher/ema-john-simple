@@ -1,24 +1,59 @@
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header/Header';
+import Shop from './components/Shop/Shop';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import Review from './components/Review/Review';
+import Inventory from './components/Inventory/Inventory';
+import NoMatch from './components/NoMatch/NoMatch';
+import ProductDetail from './components/ProductDetail/ProductDetail';
+import Shipment from './components/Shipment/Shipment';
+import Login from './components/Login/Login';
+import { createContext, useState } from 'react';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+
+export const UserContext=createContext();
 
 function App() {
+  const [loggedInUser,setLoggedInUser]=useState({});
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={[loggedInUser,setLoggedInUser]}>   
+      <h2>Email:{loggedInUser.email}</h2>   
+      <Router>
+      <Header></Header>
+        <Switch>
+          <Route path="/shop">
+            <Shop></Shop>
+          </Route>
+          <Route path="/review">
+            <Review></Review>
+          </Route>
+          <PrivateRoute path="/inventory">
+            <Inventory></Inventory>
+          </PrivateRoute>
+          <Route path="/login">
+            <Login> </Login>
+          </Route>
+          <PrivateRoute path="/shipment">
+            <Shipment> </Shipment>
+          </PrivateRoute>
+          <Route exact path="/">
+            <Shop> </Shop>
+          </Route>
+          <Route path="/product/:productKey">
+            <ProductDetail> </ProductDetail>
+          </Route>
+          <Route path="*">
+            <NoMatch></NoMatch>
+          </Route>
+        </Switch>
+      </Router>
+    </UserContext.Provider>
   );
 }
 
